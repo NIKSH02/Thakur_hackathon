@@ -2,18 +2,18 @@ import React from 'react';
 import MarqueeItem from './MarqueeItem';
 
 const images = [
-  { src: 'conatiner1.jpg', title: 'Collection V2' },
-  { src: 'conatiner2.jpg', title: 'Collection V3' },
-  { src: 'conatiner3.jpg', title: 'Collection V4' },
-  { src: 'conatiner4.jpg', title: 'Collection V5' },
-  { src: 'conatiner5.jpg', title: 'Collection V6' },
-  { src: 'conatiner6.jpg', title: 'Collection V7' },
-  { src: 'conatiner7.jpg', title: 'Collection V8' },
-  { src: 'conatiner8.jpg', title: 'Collection V9' },
-  { src: 'conatiner9.jpg', title: 'Collection V10' },
-  { src: 'conatiner10.jpg', title: 'Collection V11' },
-  { src: 'conatiner.jpg', title: 'Collection V12' },
-  { src: 'container11.jpg', title: 'Collection V13' },
+  { src: '/images/mob1.jpg', title: 'Premium Smartphones' },
+  { src: '/images/mob2.jpg', title: 'Wireless Headphones' },
+  { src: '/images/mob3.jpg', title: 'Gaming Laptops' },
+  { src: '/images/mob5.jpg', title: 'Smart Watches' },
+  { src: '/images/mob6.jpg', title: 'Bluetooth Speakers' },
+  { src: '/images/fest2.jpg', title: 'Tablet Collection' },
+  { src: '/images/mob8.jpg', title: 'iPhone Series' },
+  { src: '/images/mob9.jpg', title: 'Android Phones' },
+  { src: '/images/fest3.jpg', title: 'Gaming Accessories' },
+  { src: '/images/mob11.jpg', title: 'Power Banks' },
+  { src: '/images/fest11.jpg', title: 'Camera Gear' },
+  { src: '/images/fest12.jpg', title: 'Festival Electronics' },
 ];
 
 const InfiniteMarquee = () => {
@@ -23,7 +23,7 @@ const InfiniteMarquee = () => {
         {/* Marquee Container with Enhanced Fade Borders */}
         <div className="w-screen relative h-[24rem] sm:h-[30rem] lg:h-[36rem] overflow-hidden shadow-2xl backdrop-blur-sm border border-gray-700/30 " style={{background: "rgb(37,37,37)"}}>
           <h2 className="text-2xl sm:text-4xl lg:text-5xl font-bold text-center mb-8 sm:mb-12 bg-gradient-to-r from-gray-100 via-white to-gray-300 bg-clip-text text-transparent tracking-tight pt-4">
-            Premium Collection Gallery
+            Mobile & Electronics Gallery
           </h2>
           
           {/* Left Fade Border - Enhanced Vignette */}

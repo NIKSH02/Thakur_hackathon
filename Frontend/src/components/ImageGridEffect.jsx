@@ -1,19 +1,20 @@
 // src/components/ImageGridSection.jsx
-import React from 'react';
+import React, { useRef, useState } from 'react';
+import { motion, useInView } from 'framer-motion';
 
 const benefits = [
   {
-    icon: '/icons/quality.png',
+    icon: '/images/mob3.jpg',
     title: '100% Quality',
     desc: 'We provide the best quality as per your needs.',
   },
   {
-    icon: '/icons/shipping.png',
+    icon: '/images/mob5.jpg',
     title: 'Free Shipping',
     desc: 'Two-day delivery on thousands of items.',
   },
   {
-    icon: '/icons/secure.png',
+    icon: '/images/mob6.jpg',
     title: '100% Secure Payment',
     desc: 'We secure your all transactions from fraud.',
   },
@@ -21,32 +22,55 @@ const benefits = [
 
 const section1 = [
   {
-    image: '/images/desk.jpg',
+    image: '/images/mob1.jpg',
     title: 'Minimal Desk',
     price: '$600',
     button: true,
   },
   {
-    image: '/images/lamp.jpg',
+    image: '/images/mob2.jpg',
     title: 'Beautiful Lamps',
     price: '$150',
     button: true,
   },
+ 
 ];
 
-const section2 = [
-  { image: '/images/sofa.jpg', title: 'Golden Oslo Sofa', price: '$250' },
-  { image: '/images/chair.jpg' },
-  { icon: '/icons/sofa.png', label: 'CHAIR & SOFA', button: true },
-  { image: '/images/stool.jpg' },
-  { image: '/images/lamp2.jpg', title: 'Golden Oslo Sofa', price: '$250' },
-  { image: '/images/clock.jpg' },
-  { icon: '/icons/accessory.png', label: 'ACCESSORIES', button: true },
-  { image: '/images/mug.jpg' },
-  { image: '/images/pendant.jpg' },
-];
+const cardVariants = {
+  hidden: { opacity: 0, y: 80 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      type: 'spring',
+      stiffness: 80,
+      damping: 15,
+    },
+  },
+};
 
 const ImageGridSection = () => {
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  
+  // Additional images for carousel functionality
+  const carouselImages = [
+    "/images/mob1.jpg",
+    "/images/mob2.jpg", 
+    "/images/mob3.jpg",
+    "/images/mob5.jpg",
+    "/images/mob6.jpg",
+    "/images/mob7.jpg",
+    "/images/mob8.jpg",
+    "/images/mob9.jpg"
+  ];
+
+  const nextImage = () => {
+    setCurrentImageIndex((prev) => (prev + 1) % carouselImages.length);
+  };
+
+  const prevImage = () => {
+    setCurrentImageIndex((prev) => (prev - 1 + carouselImages.length) % carouselImages.length);
+  };
   return (
     <div className="bg-white text-gray-800">
       {/* Benefits Section */}
@@ -60,62 +84,75 @@ const ImageGridSection = () => {
         ))}
       </div>
 
-      {/* Section 1 */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 px-6 py-10">
-        {section1.map((item, i) => (
-          <div key={i} className="relative overflow-hidden">
-            <img
-              src={item.image}
-              alt={item.title}
-              className="w-full h-[350px] object-cover rounded-xl"
+      {/* Masonry-style Grid with Motion */}
+      <div className="columns-1 md:columns-2 gap-6 px-6 py-10 space-y-6">
+        {section1.map((item, i) => {
+          return (
+            <ImageCard 
+              key={i} 
+              item={item} 
+              carouselImages={carouselImages}
+              currentImageIndex={currentImageIndex}
+              nextImage={nextImage}
+              prevImage={prevImage}
             />
-            <div className="absolute inset-0 bg-black/20 flex flex-col justify-center items-start p-6">
-              <h2 className="text-white text-2xl mb-2">{item.title}</h2>
-              <p className="text-white font-semibold mb-3">Starting from {item.price}</p>
-              {item.button && (
-                <button className="bg-[#855437] text-white px-4 py-2 rounded">Shop Now</button>
-              )}
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* Section 2 */}
-      <div className="px-6 pb-16">
-        <h2 className="text-center text-2xl font-semibold mb-4">Featured Products</h2>
-        <p className="text-center mb-10 max-w-3xl mx-auto text-sm">
-          A fusion of comfort, style and quality without compromise. A collection aimed to make the ordinary extraordinary.
-        </p>
-        <div className="grid grid-cols-3 md:grid-cols-5 gap-4">
-          {section2.map((item, i) => (
-            <div key={i} className="relative group h-[200px]">
-              {item.image && (
-                <img
-                  src={item.image}
-                  alt={item.title || `grid-${i}`}
-                  className="w-full h-full object-cover rounded-md"
-                />
-              )}
-              {item.icon && (
-                <div className="bg-white border rounded-md h-full flex flex-col justify-center items-center text-center">
-                  <img src={item.icon} alt={item.label} className="w-12 h-12 mb-2" />
-                  <p className="font-medium text-sm mb-2">{item.label}</p>
-                  {item.button && (
-                    <button className="bg-[#855437] text-white px-3 py-1 rounded text-sm">Shop Now</button>
-                  )}
-                </div>
-              )}
-              {item.title && (
-                <div className="absolute bottom-0 left-0 bg-black/70 text-white text-sm p-2 w-full">
-                  <p>{item.title}</p>
-                  <strong>{item.price}</strong>
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
+          );
+        })}
       </div>
     </div>
+  );
+};
+
+// Separate component for each image card
+const ImageCard = ({ item, carouselImages, currentImageIndex, nextImage, prevImage }) => {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: false, amount: 0.2 });
+
+  return (
+    <motion.div
+      ref={ref}
+      variants={cardVariants}
+      initial="hidden"
+      animate={isInView ? 'visible' : 'hidden'}
+      className="relative overflow-hidden rounded-xl break-inside-avoid group"
+    >
+      <img
+        src={carouselImages[currentImageIndex]}
+        alt={item.title}
+        className="w-full h-auto max-h-[400px] object-cover rounded-xl transition-transform duration-500 hover:scale-105"
+      />
+      
+      {/* Navigation buttons - always visible */}
+      <div className="absolute bottom-4 right-4 flex space-x-3 z-10 opacity-100">
+        <button
+          onClick={prevImage}
+          className="bg-black/70 hover:bg-black/90 text-white p-3 rounded-full transition-all duration-300 shadow-lg"
+        >
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          </svg>
+        </button>
+        
+        <button
+          onClick={nextImage}
+          className="bg-black/70 hover:bg-black/90 text-white p-3 rounded-full transition-all duration-300 shadow-lg"
+        >
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
+      </div>
+
+      <div className="absolute inset-0 bg-black/30 flex flex-col justify-center items-start p-6">
+        <h2 className="text-white text-xl md:text-2xl mb-2">{item.title}</h2>
+        <p className="text-white font-semibold mb-3">Starting from {item.price}</p>
+        {item.button && (
+          <button className="bg-[#855437] text-white px-4 py-2 rounded hover:bg-[#6d4329] transition-colors duration-300">
+            Shop Now
+          </button>
+        )}
+      </div>
+    </motion.div>
   );
 };
 

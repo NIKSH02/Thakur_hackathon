@@ -15,7 +15,7 @@ const MarqueeItem = ({ image, title, isLast, className = '' }) => {
       
       <div className="w-56 xs:w-64 sm:w-72 md:w-76 lg:w-80 xl:w-[22rem] h-56 xs:h-64 sm:h-72 md:h-76 lg:h-80 xl:h-88 overflow-hidden flex items-start justify-start bg-black/50 backdrop-blur-sm shadow-2xl group-hover:shadow-gray-600/20 transition-all duration-500 mb-2 xs:mb-3 sm:mb-4">
         <img
-          src={'/images/' + image}
+          src={image}
           alt={title}
           className="w-full h-full object-cover transform transition-all duration-500 group-hover:scale-110 group-hover:brightness-110"
           style={{ aspectRatio: '1 / 1' }}

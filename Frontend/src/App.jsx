@@ -5,6 +5,8 @@ import HeroSection from './components/HeroSection';
 import NextSection from './components/NextSection';
 import InfiniteMarquee from './components/InfiniteMarquee';
 import ImageGridEffect from './components/ImageGridEffect';
+import ImageSection from './components/ImageSection';
+import Footer from './components/Footer';
 
 const App = () => {
   return (
@@ -14,6 +16,8 @@ const App = () => {
 
       <InfiniteMarquee />
       <ImageGridEffect />
+      <ImageSection />
+      <Footer />
     </div>
   );
 };
