@@ -2,8 +2,6 @@ import React from 'react'
 import Loader from "./pages/Loader"
 import {  BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom"
 import LandingPage from './pages/LandingPage.jsx'
-import Add from './pages/Add.jsx'
-import PageTransition from './components/PageTransition.jsx'
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
@@ -75,7 +73,7 @@ function App() {
               <Loader />
           } /> 
           <Route 
-            path="/Home"
+            path="/"
             element={
               <LandingPage />
             }
@@ -83,13 +81,13 @@ function App() {
           <Route 
             path="/add"
             element={
-              <Add />
+              <Loader />
             }
           />
           <Route
-            path='/'
+            path='/jome'
             element= {
-              <PageTransition />
+              <Loader />
             }
           />
         </Routes>

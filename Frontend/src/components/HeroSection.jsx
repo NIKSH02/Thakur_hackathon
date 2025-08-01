@@ -1,10 +1,25 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 
+import Beams from '../components/Beams.jsx'
+
 const words = ["SEI", "SEIZ", "SEIZE", "SEIZE G", "SEIZE GR", "SEIZE GRE"];
 
 const HeroSection = () => {
   return (
+    <div style={{ width: '100%', height: '100vh', position: 'relative' }}>
+      <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 10 }}>
+        <Beams
+          beamWidth={2}
+          beamHeight={15}
+          beamNumber={12}
+          lightColor="#ffffff"
+          speed={2}
+          noiseIntensity={1.75}
+          scale={0.2}
+          rotation={30}
+        />
+      </div>
     <div className="relative w-full h-screen bg-black overflow-hidden flex items-center justify-center">
       {/* Background Image (optional) */}
       <div className="absolute inset-0 opacity-20">
@@ -29,6 +44,7 @@ const HeroSection = () => {
           </motion.div>
         ))}
       </div>
+    </div>
     </div>
   );
 };
