@@ -1,4 +1,5 @@
 // src/App.jsx
+import Loader from "./pages/Loader"
 
 import InfiniteMarquee from './components/InfiniteMarquee';
 import './index.css'; // Ensure your Tailwind CSS is imported
