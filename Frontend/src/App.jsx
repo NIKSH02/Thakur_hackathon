@@ -2,6 +2,9 @@ import React from 'react'
 import Loader from "./pages/Loader"
 import {  BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom"
 import LandingPage from './pages/LandingPage.jsx'
+import SplashCursor from './components/SplashCursor.jsx'
+
+
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
@@ -66,6 +69,7 @@ function App() {
   return (
     <ErrorBoundary>
       <Router>
+        <SplashCursor />
         <Routes>
           <Route 
             path="/Load" 

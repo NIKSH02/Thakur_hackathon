@@ -1,7 +1,20 @@
 import React from 'react';
-import { motion } from 'framer-motion';
-
 import Beams from '../components/Beams.jsx'
+
+
+import ScrollTextAnimation from './AnimatedTextSection.jsx'
+
+
+import '../components/ScrollTextAnimation.css'; // Make sure global styles are available
+
+// Importing a font from Google Fonts for a better look
+// You can also add this link to your public/index.html file
+const fontUrl = "https://fonts.googleapis.com/css2?family=Montserrat:wght@800&display=swap";
+const link = document.createElement('link');
+link.href = fontUrl;
+link.rel = 'stylesheet';
+document.head.appendChild(link);
+
 
 const words = ["SEI", "SEIZ", "SEIZE", "SEIZE G", "SEIZE GR", "SEIZE GRE"];
 
@@ -32,7 +45,7 @@ const HeroSection = () => {
 
       {/* Typographic Animation */}
       <div className="z-10 text-white font-extrabold text-[80px] leading-none tracking-tight uppercase">
-        {words.map((word, i) => (
+        {/* {words.map((word, i) => (
           <motion.div
             key={i}
             initial={{ opacity: 0, y: 50 }}
@@ -42,7 +55,10 @@ const HeroSection = () => {
           >
             {word}
           </motion.div>
-        ))}
+        ))} */}
+
+
+        <ScrollTextAnimation />
       </div>
     </div>
     </div>
