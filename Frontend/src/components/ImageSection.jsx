@@ -47,7 +47,7 @@ const ImageSection = () => {
         price: "$250",
       },
       {
-        src: "/images/fest5.jpg",
+        src: "/images/fest4.jpg",
         alt: "An icon of a chair and a sofa",
         layout: "small",
         textOverlay: "CHAIR & SOFA",
