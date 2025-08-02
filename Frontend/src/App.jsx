@@ -64,8 +64,8 @@ class ErrorBoundary extends React.Component {
 function App() {
 
   return (
+    <ErrorBoundary>
     <AuthProvider>
-      <ErrorBoundary>
         <Router>
           <SplashCursor />
           <Routes>
@@ -130,8 +130,8 @@ function App() {
           />
         </Routes>
       </Router>
+      </AuthProvider>
     </ErrorBoundary>
-    </AuthProvider>
   )
 }
 
