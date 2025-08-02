@@ -6,6 +6,7 @@ import ImageGridEffect from '../components/ImageGridEffect.jsx';
 import ImageSection from '../components/ImageSection.jsx';
 import Dock from '../components/Dock.jsx'
 import Footer from '../components/Footer.jsx';
+import ScrollStack, { ScrollStackItem } from '../components/ScrollStack.jsx'
 
 import {
   VscHome,
@@ -47,7 +48,33 @@ const items = [
             />
        </div>
        <ImageSection/>
-       <Footer/>
+        <div style={{
+          position: 'relative',
+          top: 0,
+          backgroundColor: white,
+          height: '100vh',
+          overflowY: 'auto',
+          scrollBehavior: 'smooth',
+          overflow: "hidden",
+          overflowY: "auto",
+          scrollBehavior: "smooth"
+        }} >
+          <ScrollStack >
+            <ScrollStackItem>
+              <h2>Card 1</h2>
+              <p>Lorem ipsum dolor sit amet.</p>
+            </ScrollStackItem>
+            <ScrollStackItem>
+              <h2>Card 2</h2>
+              <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Fugiat, explicabo.</p>
+            </ScrollStackItem>
+            <ScrollStackItem>
+              <h2>Card 3</h2>
+              <p>Lorem ipsum dolor sit amet consectetur adipisicing.</p>
+            </ScrollStackItem>
+          </ScrollStack>
+        </div>
+      <Footer/> 
     </div>
   );
 };

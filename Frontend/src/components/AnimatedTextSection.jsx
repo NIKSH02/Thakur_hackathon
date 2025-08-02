@@ -1,53 +1,104 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 
 // --- CSS Styles ---
+// We've updated the styles to support the new animation direction and layout.
 const styles = `
     @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@800&display=swap');
 
-    .text-animation-wrapper {
+    :root {
         --text-color: #E0E0E0;
-        --background-color: #111111;
-        --font-size: 5.5rem;
-        --line-height: 1.1;
-        --padding: 2rem;
-        
+        --background-color: transparent;
+        --font-size: 5.5rem; /* Made font slightly larger */
+        --line-height: 1.2;
+        --animation-speed: 0.5s; /* Made animation slightly faster */
+        --padding: 5vw; 
+    }
+
+    body {
         background-color: var(--background-color);
         color: var(--text-color);
         font-family: 'Montserrat', sans-serif;
-        position: relative;
-        min-height: 400px; /* Adjust based on your content needs */
+        margin: 0;
     }
 
-    /* Main container for the text section */
-    .text-section-container {
-        padding: var(--padding);
+    .info-section {
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+    }
+
+    /* 1. The Animation Track */
+    /* This container provides the scrollable height for the animation to play out. */
+    /* Adjusted height for the shorter text. */
+    .animation-track {
+        position: relative;
+        height: 200vh; 
+    }
+
+    /* 2. The Sticky Container */
+    /* This container "sticks" to the top of the viewport. */
+    .sticky-container {
+        position: sticky;
+        top: 0;
+        height: 100vh;
+        width: 100%;
+        overflow: hidden; 
+        display: flex; 
+        flex-direction: column;
+        justify-content: flex-start; 
+        padding-left: var(--padding);
+        padding-top: var(--padding);
         box-sizing: border-box;
-        position: relative;
     }
 
-    /* Styling for each individual line of text */
+    /* This div holds the absolutely positioned text lines */
+    .text-lines-wrapper {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background-color: var(--background-color);
+        z-index: 10;
+    }
+
+    /* 3. The Animated Text Line */
     .text-line {
+        position: absolute;
         font-size: var(--font-size);
         font-weight: 800;
         line-height: var(--line-height);
         text-transform: uppercase;
-        transition: transform 0.1s linear;
-        margin: 0;
-        padding: 0;
+        white-space: nowrap;
+        /* Using a clean and crisp transition */
+        transition: 
+            opacity var(--animation-speed) cubic-bezier(0.65, 0, 0.35, 1), 
+            transform var(--animation-speed) cubic-bezier(0.65, 0, 0.35, 1);
+        
+        transform: translateY(calc(var(--i) * var(--font-size) * var(--line-height)));
+    }
+
+    /* 4. The Hidden State (MODIFIED) */
+    /* The animation now slides UPWARDS to match the video reference. */
+    .text-line.hidden {
+        opacity: 0;
+        /* Slides UP into the line above it. Removed blur and scale for a cleaner look. */
+        transform: 
+            translateY(calc((var(--i) - 1) * var(--font-size) * var(--line-height)));
     }
 
     /* Responsive adjustments */
     @media (max-width: 768px) {
-        .text-animation-wrapper {
+        :root {
             --font-size: 3rem;
-            --padding: 1rem;
         }
     }
 `;
 
-// Text to be animated
-const text = "WE CREATE";
+// Text updated to match the video reference
+const text = "CRATE";
 
+// The main component which is now a self-contained animation section
 export default function TextAnimationSection() {
     const textLines = useMemo(() => {
         const lines = [];
@@ -57,87 +108,71 @@ export default function TextAnimationSection() {
         return lines;
     }, []);
 
-    // A ref to hold an array of refs, one for each text line element
-    const lineRefs = useRef([]);
-    // State to store the initial top offset of each line
-    const [initialTops, setInitialTops] = useState([]);
-    // Ref for the wrapper to calculate relative positions
-    const wrapperRef = useRef(null);
+    const trackRef = useRef(null);
+    const textWrapperRef = useRef(null);
 
-    // 1. On mount, get the initial top position of each line relative to the page
+    // useEffect handles the scroll logic within the track
     useEffect(() => {
-        const calculateInitialPositions = () => {
-            if (wrapperRef.current) {
-                const wrapperRect = wrapperRef.current.getBoundingClientRect();
-                const wrapperTop = wrapperRect.top + window.scrollY;
-                
-                const tops = lineRefs.current.map(el => {
-                    if (!el) return 0;
-                    const rect = el.getBoundingClientRect();
-                    return rect.top + window.scrollY - wrapperTop;
-                });
-                setInitialTops(tops);
-            }
-        };
+        const track = trackRef.current;
+        const textLinesElements = textWrapperRef.current?.children;
+        if (!track || !textLinesElements || textLinesElements.length === 0) return;
 
-        // Calculate positions after a short delay to ensure DOM is ready
-        const timer = setTimeout(calculateInitialPositions, 100);
-        
-        // Also recalculate on window resize
-        window.addEventListener('resize', calculateInitialPositions);
-        
-        return () => {
-            clearTimeout(timer);
-            window.removeEventListener('resize', calculateInitialPositions);
-        };
-    }, [textLines]);
-
-    // 2. On scroll, apply the reverse transform effect
-    useEffect(() => {
         const handleScroll = () => {
-            if (!wrapperRef.current) return;
+            const trackRect = track.getBoundingClientRect();
             
-            const wrapperRect = wrapperRef.current.getBoundingClientRect();
-            const wrapperTop = wrapperRect.top + window.scrollY;
-            const scrollY = window.scrollY;
+            if (trackRect.bottom < 10 || trackRect.top >= window.innerHeight) {
+                return;
+            }
+
+            const scrollDistance = track.scrollHeight - window.innerHeight;
+            // Prevent division by zero if scrollDistance is 0
+            if (scrollDistance <= 0) return;
+
+            const scrollYInTrack = -trackRect.top;
+            const progress = Math.max(0, Math.min(1, scrollYInTrack / scrollDistance));
             
-            lineRefs.current.forEach((el, i) => {
-                if (!el || initialTops[i] === undefined) return;
+            const hiddenCount = Math.floor(progress * (textLines.length + 1));
 
-                const elementAbsoluteTop = wrapperTop + initialTops[i];
-
-                // Check if the user has scrolled past the element's initial top position
-                if (scrollY > elementAbsoluteTop) {
-                    // Calculate how far past we've scrolled
-                    const distanceScrolledPast = scrollY - elementAbsoluteTop;
-                    // Apply a transform to move the element DOWN by that distance
-                    el.style.transform = `translateY(${distanceScrolledPast}px)`;
+            Array.from(textLinesElements).forEach((line, index) => {
+                if (index < hiddenCount) {
+                    line.classList.add('hidden');
                 } else {
-                    // If we haven't scrolled past it yet, it should have no transform
-                    el.style.transform = 'translateY(0px)';
+                    line.classList.remove('hidden');
                 }
             });
         };
 
         window.addEventListener('scroll', handleScroll, { passive: true });
+        handleScroll(); // Initial call
 
         return () => window.removeEventListener('scroll', handleScroll);
-    }, [initialTops]);
+    }, [textLines.length]);
+
 
     return (
-        <div className="text-animation-wrapper" ref={wrapperRef}>
+        <div>
             <style>{styles}</style>
             
-            <div className="text-section-container">
-                {textLines.map((lineContent, index) => (
-                    <div
-                        key={index}
-                        className="text-line"
-                        ref={el => lineRefs.current[index] = el}
-                    >
-                        {lineContent}
+            {/* The initial info-section has been removed to start animation at the top */}
+
+            <div className="animation-track" ref={trackRef}>
+                <div className="sticky-container">
+                    <div className="text-lines-wrapper" ref={textWrapperRef}>
+                        {textLines.map((lineContent, index) => (
+                            <div
+                                key={index}
+                                className="text-line"
+                                style={{ '--i': index }} 
+                            >
+                                {lineContent}
+                            </div>
+                        ))}
                     </div>
-                ))}
+                </div>
+            </div>
+
+            <div className="info-section">
+                <h1>End of Animation</h1>
             </div>
         </div>
     );
