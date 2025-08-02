@@ -6,9 +6,9 @@ import ApiError from "./utils/ApiError.js";
 import authRoutes from "./routes/auth.js";
 import productRoutes from "./routes/products.js";
 import cookieParser from "cookie-parser";
-import path from "path";
 
 
+// Load environment variables
 dotenv.config();
 
 const app = express();
@@ -29,7 +29,8 @@ app.use(
 
 app.use(cookieParser());
 
-console.log("Serving static files from:", path.resolve("uploads"));
+// Helper: Log static file serving for debug
+// console.log("Serving static files from:", path.resolve("uploads"));
 app.use("/uploads", express.static("uploads"));
 
 app.use((req, res, next) => {
@@ -40,6 +41,12 @@ app.use((req, res, next) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
 
+app.get("/", (req, res) => {
+  res.send("Welcome to the VoltCraze API");
+});
+
+
+// 404 Route Not Found handler
 app.use((req, res, next) => {
   next(new ApiError(404, "Route not found"));
 });
