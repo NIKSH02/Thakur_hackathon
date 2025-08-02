@@ -1,6 +1,7 @@
 // src/components/ImageGridSection.jsx
-import React, { useRef, useState } from 'react';
+import React, { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 
 const benefits = [
   {
@@ -28,7 +29,7 @@ const section1 = [
     button: true,
   },
   {
-    image: '/images/mob2.jpg',
+    image: '/images/mob9.jpg',
     title: 'Beautiful Lamps',
     price: '$150',
     button: true,
@@ -50,27 +51,13 @@ const cardVariants = {
 };
 
 const ImageGridSection = () => {
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  
   // Additional images for carousel functionality
   const carouselImages = [
     "/images/mob1.jpg",
-    "/images/mob2.jpg", 
-    "/images/mob3.jpg",
-    "/images/mob5.jpg",
-    "/images/mob6.jpg",
-    "/images/mob7.jpg",
-    "/images/mob8.jpg",
-    "/images/mob9.jpg"
+    "/images/fest3.jpg", 
+
   ];
 
-  const nextImage = () => {
-    setCurrentImageIndex((prev) => (prev + 1) % carouselImages.length);
-  };
-
-  const prevImage = () => {
-    setCurrentImageIndex((prev) => (prev - 1 + carouselImages.length) % carouselImages.length);
-  };
   return (
     <div className="bg-white text-gray-800">
       {/* Benefits Section */}
@@ -92,9 +79,7 @@ const ImageGridSection = () => {
               key={i} 
               item={item} 
               carouselImages={carouselImages}
-              currentImageIndex={currentImageIndex}
-              nextImage={nextImage}
-              prevImage={prevImage}
+              currentImageIndex={i} // Use different image for each card
             />
           );
         })}
@@ -104,9 +89,29 @@ const ImageGridSection = () => {
 };
 
 // Separate component for each image card
-const ImageCard = ({ item, carouselImages, currentImageIndex, nextImage, prevImage }) => {
+const ImageCard = ({ item, carouselImages, currentImageIndex }) => {
   const ref = useRef(null);
+  const navigate = useNavigate();
   const isInView = useInView(ref, { once: false, amount: 0.2 });
+
+  // Function to handle shop now button click
+  const handleShopNow = () => {
+    // Default product ID that matches ProductDetailPage
+    const DEFAULT_PRODUCT_ID = '507f1f77bcf86cd799439011';
+    console.log('Navigating to product:', DEFAULT_PRODUCT_ID);
+    
+    // Navigate to product page
+    navigate(`/product/${DEFAULT_PRODUCT_ID}`);
+    
+    // Scroll to top of the page after navigation
+    setTimeout(() => {
+      window.scrollTo({
+        top: 0,
+        left: 0,
+        behavior: 'smooth'
+      });
+    }, 100); // Small delay to ensure navigation completes
+  };
 
   return (
     <motion.div
@@ -121,33 +126,15 @@ const ImageCard = ({ item, carouselImages, currentImageIndex, nextImage, prevIma
         alt={item.title}
         className="w-full h-auto max-h-[400px] object-cover rounded-xl transition-transform duration-500 hover:scale-105"
       />
-      
-      {/* Navigation buttons - always visible */}
-      <div className="absolute bottom-4 right-4 flex space-x-3 z-10 opacity-100">
-        <button
-          onClick={prevImage}
-          className="bg-black/70 hover:bg-black/90 text-white p-3 rounded-full transition-all duration-300 shadow-lg"
-        >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-          </svg>
-        </button>
-        
-        <button
-          onClick={nextImage}
-          className="bg-black/70 hover:bg-black/90 text-white p-3 rounded-full transition-all duration-300 shadow-lg"
-        >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-          </svg>
-        </button>
-      </div>
 
       <div className="absolute inset-0 bg-black/30 flex flex-col justify-center items-start p-6">
         <h2 className="text-white text-xl md:text-2xl mb-2">{item.title}</h2>
         <p className="text-white font-semibold mb-3">Starting from {item.price}</p>
         {item.button && (
-          <button className="bg-[#855437] text-white px-4 py-2 rounded hover:bg-[#6d4329] transition-colors duration-300">
+          <button 
+            onClick={handleShopNow}
+            className="bg-[#855437] text-white px-4 py-2 rounded hover:bg-[#6d4329] transition-colors duration-300"
+          >
             Shop Now
           </button>
         )}

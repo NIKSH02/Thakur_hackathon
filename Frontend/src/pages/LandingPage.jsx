@@ -32,7 +32,7 @@ const items = [
 ];
 
   return (
-    <div className="bg-[#0d0d0d] text-white font-['Inter']">
+    <div className=" text-white font-['Inter'] relative">
       <Navbar />
       <HeroSection />
       <InfiniteMarquee />
