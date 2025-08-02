@@ -6,7 +6,7 @@ import ApiError from "./utils/ApiError.js";
 import authRoutes from "./routes/auth.js";
 import productRoutes from "./routes/products.js";
 import cookieParser from "cookie-parser";
-import path from "path";
+
 
 // Load environment variables
 dotenv.config();
@@ -23,8 +23,6 @@ connectDB();
 app.use(
   cors({
     origin: [
-      "https://servicehub-user-frontend.onrender.com",
-      "https://servicehub-adminfrontend.onrender.com",
       "http://localhost:5173",
       "http://localhost:5174", // add any other frontend URLs you use
     ],
@@ -35,7 +33,7 @@ app.use(
 app.use(cookieParser());
 
 // Helper: Log static file serving for debug
-console.log("Serving static files from:", path.resolve("uploads"));
+// console.log("Serving static files from:", path.resolve("uploads"));
 app.use("/uploads", express.static("uploads"));
 
 // Add debug middleware to log all requests
@@ -47,6 +45,11 @@ app.use((req, res, next) => {
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
+
+app.get("/", (req, res) => {
+  res.send("Welcome to the VoltCraze API");
+});
+
 
 // 404 Route Not Found handler
 app.use((req, res, next) => {
