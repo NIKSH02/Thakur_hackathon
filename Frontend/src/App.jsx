@@ -1,13 +1,12 @@
 import React from 'react'
-import Loader from "./pages/Loader"
 import {  BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom"
 import LandingPage from './pages/LandingPage.jsx'
 import AboutPage from './pages/AboutPage.jsx'
 import LoginPage from './pages/LoginPage.jsx'
 import SignUpPage from './pages/SignUpPage.jsx'
-// import SplashCursor from './components/SplashCursor.jsx'
+import ProductDetailPage from './pages/ProductDetailPage.jsx'
+import SplashCursor from './components/SplashCursor.jsx'
 import { AuthProvider } from './context/AuthContext.jsx'
-import TextAnimationSection from './components/AnimatedTextSection.jsx'
 
 
 
@@ -63,68 +62,45 @@ class ErrorBoundary extends React.Component {
 function App() {
 
   return (
-    <AuthProvider>
-      <ErrorBoundary>
+    <ErrorBoundary>
+      <AuthProvider>
         <Router>
-          {/* <SplashCursor /> */}
+          <SplashCursor />
           <Routes>
-          <Route 
-            path="/Load" 
-            element={
-              <Loader />
-          } /> 
-          <Route 
-            path="/"
-            element={
-              <LandingPage />
-            }
-          />
-          <Route 
-            path="/about"
-            element={
-              <AboutPage />
-            }
-          />
-          <Route 
-            path="/login"
-            element={
-              <LoginPage />
-            }
-          />
-          <Route 
-            path="/signup"
-            element={
-              <SignUpPage />
-            }
-          />
-          <Route 
-            path="/product/:id"
-            element={
-              <ProductDetailPage />
-            }
-          />
-          <Route 
-            path="/add"
-            element={
-              <Loader />
-            }
-          />
-          <Route
-            path='/jome'
-            element= {
-              <Loader />
-            }
-          />
-          <Route 
-            path='/animate'
-            element={
-              <TextAnimationSection />
-            }
-          />
-        </Routes>
-      </Router>
+            <Route 
+              path="/"
+              element={
+                <LandingPage />
+              }
+            />
+            <Route 
+              path="/about"
+              element={
+                <AboutPage />
+              }
+            />
+            <Route 
+              path="/login"
+              element={
+                <LoginPage />
+              }
+            />
+            <Route 
+              path="/signup"
+              element={
+                <SignUpPage />
+              }
+            />
+            <Route 
+              path="/product/:id"
+              element={
+                <ProductDetailPage />
+              }
+            />
+          </Routes>
+        </Router>
+      </AuthProvider>
     </ErrorBoundary>
-    </AuthProvider>
   )
 }
 

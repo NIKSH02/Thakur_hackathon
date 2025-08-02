@@ -20,7 +20,7 @@ const words = ["SEI", "SEIZ", "SEIZE", "SEIZE G", "SEIZE GR", "SEIZE GRE"];
 
 const HeroSection = () => {
   return (
-    <div style={{ width: '100%', height: '150vh', position: 'relative' }}>
+    <div id="hero-section" style={{ width: '100%', height: '150vh', position: 'relative' }}>
       <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 2 }}>
         <Beams
           beamWidth={2}

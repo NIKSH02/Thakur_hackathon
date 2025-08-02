@@ -6,6 +6,7 @@ import ImageGridEffect from '../components/ImageGridEffect.jsx';
 import ImageSection from '../components/ImageSection.jsx';
 import Dock from '../components/Dock.jsx'
 import Footer from '../components/Footer.jsx';
+import { useNavigate } from 'react-router-dom';
 
 import {
   VscHome,
@@ -20,11 +21,28 @@ import {
 
 
 const LandingPage = () => {
+  const navigate = useNavigate();
+
+  // Function to scroll to hero section
+  const scrollToHero = () => {
+    const heroElement = document.querySelector('#hero-section');
+    if (heroElement) {
+      heroElement.scrollIntoView({ behavior: 'smooth' });
+    } else {
+      // If no ID found, scroll to top
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
+  // Function to navigate to signup page
+  const goToSignup = () => {
+    navigate('/signup');
+  };
 
 const items = [
-  { icon: <VscHome size={18} />, label: 'Home', onClick: () => alert('Home!') },
+  { icon: <VscHome size={18} />, label: 'Home', onClick: scrollToHero },
   { icon: <VscArchive size={18} />, label: 'Archive', onClick: () => alert('Archive!') },
-  { icon: <VscAccount size={18} />, label: 'Profile', onClick: () => alert('Profile!') },
+  { icon: <VscAccount size={18} />, label: 'Profile', onClick: goToSignup },
   { icon: <VscSettingsGear size={18} />, label: 'Settings', onClick: () => alert('Settings!') },
   { icon: <VscBell size={18} />, label: 'Notifications', onClick: () => alert('Notifications!') },
 //   { icon: <VscMail size={18} />, label: 'Messages', onClick: () => alert('Messages!') },
