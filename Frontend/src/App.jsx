@@ -5,9 +5,9 @@ import LandingPage from './pages/LandingPage.jsx'
 import AboutPage from './pages/AboutPage.jsx'
 import LoginPage from './pages/LoginPage.jsx'
 import SignUpPage from './pages/SignUpPage.jsx'
-import ProductDetailPage from './pages/ProductDetailPage.jsx'
-import SplashCursor from './components/SplashCursor.jsx'
+// import SplashCursor from './components/SplashCursor.jsx'
 import { AuthProvider } from './context/AuthContext.jsx'
+import TextAnimationSection from './components/AnimatedTextSection.jsx'
 
 
 
@@ -66,7 +66,7 @@ function App() {
     <AuthProvider>
       <ErrorBoundary>
         <Router>
-          <SplashCursor />
+          {/* <SplashCursor /> */}
           <Routes>
           <Route 
             path="/Load" 
@@ -113,6 +113,12 @@ function App() {
             path='/jome'
             element= {
               <Loader />
+            }
+          />
+          <Route 
+            path='/animate'
+            element={
+              <TextAnimationSection />
             }
           />
         </Routes>

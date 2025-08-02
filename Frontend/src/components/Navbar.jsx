@@ -59,7 +59,6 @@ const MinimalNavbar = () => {
             </div>
           </div>
 
-          {/* Desktop Navigation */}
           <div className="hidden md:block">
             <div className="flex items-center space-x-8">
               {navLinks.map((link) => (
@@ -156,7 +155,6 @@ const MinimalNavbar = () => {
             </div>
           </div>
 
-          {/* Mobile menu button */}
           <div className="md:hidden">
             <button
               onClick={toggleMenu}
@@ -183,7 +181,7 @@ const MinimalNavbar = () => {
           </div>
         </div>
 
-        {/* Mobile Navigation Menu */}
+
         <div 
           className={`md:hidden transition-all duration-500 ease-out overflow-hidden ${
             isMenuOpen ? 'max-h-64 opacity-100' : 'max-h-0 opacity-0'
