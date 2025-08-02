@@ -2,23 +2,18 @@ import React from 'react'
 import Loader from "./pages/Loader"
 import {  BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom"
 import LandingPage from './pages/LandingPage.jsx'
+import AboutPage from './pages/AboutPage.jsx'
+import LoginPage from './pages/LoginPage.jsx'
+import SignUpPage from './pages/SignUpPage.jsx'
 import SplashCursor from './components/SplashCursor.jsx'
+import { AuthProvider } from './context/AuthContext.jsx'
 
 
 
-// Protected Route Component
+// Protected Route Component (currently not used)
 const ProtectedRoute = ({ children }) => {
-  const { isAuthenticated, isLoading } = useAuth();
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-orange-500"></div>
-      </div>
-    );
-  }
-
-  return isAuthenticated ? children : <Navigate to="/authpage" replace />;
+  // const { isAuthenticated, isLoading } = useAuth(); // To be implemented later
+  return children; // For now, just render children
 };
 
 // Simple Error Boundary Component
@@ -67,10 +62,11 @@ class ErrorBoundary extends React.Component {
 function App() {
 
   return (
-    <ErrorBoundary>
-      <Router>
-        <SplashCursor />
-        <Routes>
+    <AuthProvider>
+      <ErrorBoundary>
+        <Router>
+          <SplashCursor />
+          <Routes>
           <Route 
             path="/Load" 
             element={
@@ -80,6 +76,24 @@ function App() {
             path="/"
             element={
               <LandingPage />
+            }
+          />
+          <Route 
+            path="/about"
+            element={
+              <AboutPage />
+            }
+          />
+          <Route 
+            path="/login"
+            element={
+              <LoginPage />
+            }
+          />
+          <Route 
+            path="/signup"
+            element={
+              <SignUpPage />
             }
           />
           <Route 
@@ -97,6 +111,7 @@ function App() {
         </Routes>
       </Router>
     </ErrorBoundary>
+    </AuthProvider>
   )
 }
 

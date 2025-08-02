@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, LogIn, UserPlus, LogOut } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 const MinimalNavbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
+  const { isLoggedIn, logout } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -16,9 +20,14 @@ const MinimalNavbar = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
+
   const navLinks = [
-    { name: 'Home', href: '#home' },
-    { name: 'About', href: '#about' },
+    { name: 'Home', href: '/' },
+    { name: 'About', href: '/about' },
     { name: 'Projects', href: '#projects' },
     { name: 'Contact', href: '#contact' }
   ];
@@ -53,9 +62,9 @@ const MinimalNavbar = () => {
           <div className="hidden md:block">
             <div className="flex items-center space-x-8">
               {navLinks.map((link) => (
-                <a
+                <Link
                   key={link.name}
-                  href={link.href}
+                  to={link.href}
                   className="relative px-3 py-2 text-white font-medium transition-all duration-300 hover:scale-105"
                   style={{
                     textShadow: '0 0 8px rgba(255, 255, 255, 0.2)'
@@ -68,8 +77,81 @@ const MinimalNavbar = () => {
                   }}
                 >
                   {link.name}
-                </a>
+                </Link>
               ))}
+              
+              {/* Authentication Buttons */}
+              <div className="flex items-center space-x-4">
+                {isLoggedIn ? (
+                  <button
+                    onClick={handleLogout}
+                    className="flex items-center space-x-2 px-4 py-2 text-white font-medium transition-all duration-300 hover:scale-105 rounded-lg"
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      border: '1px solid rgba(255, 255, 255, 0.2)',
+                      textShadow: '0 0 8px rgba(255, 255, 255, 0.2)',
+                      boxShadow: '0 0 10px rgba(255, 255, 255, 0.1)'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.target.style.background = 'rgba(255, 255, 255, 0.15)';
+                      e.target.style.textShadow = '0 0 15px rgba(255, 255, 255, 0.4)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.target.style.background = 'rgba(255, 255, 255, 0.1)';
+                      e.target.style.textShadow = '0 0 8px rgba(255, 255, 255, 0.2)';
+                    }}
+                  >
+                    <LogOut size={18} />
+                    <span>Logout</span>
+                  </button>
+                ) : (
+                  <>
+                    <Link
+                      to="/login"
+                      className="flex items-center space-x-2 px-4 py-2 text-white font-medium transition-all duration-300 hover:scale-105 rounded-lg"
+                      style={{
+                        background: 'rgba(255, 255, 255, 0.1)',
+                        border: '1px solid rgba(255, 255, 255, 0.2)',
+                        textShadow: '0 0 8px rgba(255, 255, 255, 0.2)',
+                        boxShadow: '0 0 10px rgba(255, 255, 255, 0.1)'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.target.style.background = 'rgba(255, 255, 255, 0.15)';
+                        e.target.style.textShadow = '0 0 15px rgba(255, 255, 255, 0.4)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.target.style.background = 'rgba(255, 255, 255, 0.1)';
+                        e.target.style.textShadow = '0 0 8px rgba(255, 255, 255, 0.2)';
+                      }}
+                    >
+                      <LogIn size={18} />
+                      <span>Login</span>
+                    </Link>
+                    
+                    <Link
+                      to="/signup"
+                      className="flex items-center space-x-2 px-4 py-2 text-white font-medium transition-all duration-300 hover:scale-105 rounded-lg"
+                      style={{
+                        background: 'rgba(255, 255, 255, 0.1)',
+                        border: '1px solid rgba(255, 255, 255, 0.2)',
+                        textShadow: '0 0 8px rgba(255, 255, 255, 0.2)',
+                        boxShadow: '0 0 10px rgba(255, 255, 255, 0.1)'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.target.style.background = 'rgba(255, 255, 255, 0.15)';
+                        e.target.style.textShadow = '0 0 15px rgba(255, 255, 255, 0.4)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.target.style.background = 'rgba(255, 255, 255, 0.1)';
+                        e.target.style.textShadow = '0 0 8px rgba(255, 255, 255, 0.2)';
+                      }}
+                    >
+                      <UserPlus size={18} />
+                      <span>Sign Up</span>
+                    </Link>
+                  </>
+                )}
+              </div>
             </div>
           </div>
 
@@ -116,9 +198,9 @@ const MinimalNavbar = () => {
             }}
           >
             {navLinks.map((link, index) => (
-              <a
+              <Link
                 key={link.name}
-                href={link.href}
+                to={link.href}
                 onClick={() => setIsMenuOpen(false)}
                 className={`block px-4 py-3 rounded-lg text-white font-medium transition-all duration-500 transform ${
                   isMenuOpen 
@@ -141,8 +223,77 @@ const MinimalNavbar = () => {
                 }}
               >
                 {link.name}
-              </a>
+              </Link>
             ))}
+            
+            {/* Mobile Authentication Buttons */}
+            <div className="flex space-x-3 px-4 py-3">
+              {isLoggedIn ? (
+                <button
+                  onClick={() => {
+                    handleLogout();
+                    setIsMenuOpen(false);
+                  }}
+                  className={`flex items-center space-x-2 px-4 py-2 text-white font-medium transition-all duration-500 transform rounded-lg flex-1 justify-center ${
+                    isMenuOpen 
+                      ? 'translate-x-0 opacity-100' 
+                      : 'translate-x-full opacity-0'
+                  }`}
+                  style={{
+                    transitionDelay: `${navLinks.length * 50}ms`,
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    textShadow: '0 0 8px rgba(255, 255, 255, 0.2)',
+                    boxShadow: '0 0 10px rgba(255, 255, 255, 0.1)'
+                  }}
+                >
+                  <LogOut size={16} />
+                  <span>Logout</span>
+                </button>
+              ) : (
+                <>
+                  <Link
+                    to="/login"
+                    onClick={() => setIsMenuOpen(false)}
+                    className={`flex items-center space-x-2 px-4 py-2 text-white font-medium transition-all duration-500 transform rounded-lg flex-1 justify-center ${
+                      isMenuOpen 
+                        ? 'translate-x-0 opacity-100' 
+                        : 'translate-x-full opacity-0'
+                    }`}
+                    style={{
+                      transitionDelay: `${navLinks.length * 50}ms`,
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      border: '1px solid rgba(255, 255, 255, 0.2)',
+                      textShadow: '0 0 8px rgba(255, 255, 255, 0.2)',
+                      boxShadow: '0 0 10px rgba(255, 255, 255, 0.1)'
+                    }}
+                  >
+                    <LogIn size={16} />
+                    <span>Login</span>
+                  </Link>
+                  
+                  <Link
+                    to="/signup"
+                    onClick={() => setIsMenuOpen(false)}
+                    className={`flex items-center space-x-2 px-4 py-2 text-white font-medium transition-all duration-500 transform rounded-lg flex-1 justify-center ${
+                      isMenuOpen 
+                        ? 'translate-x-0 opacity-100' 
+                        : 'translate-x-full opacity-0'
+                    }`}
+                    style={{
+                      transitionDelay: `${(navLinks.length + 1) * 50}ms`,
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      border: '1px solid rgba(255, 255, 255, 0.2)',
+                      textShadow: '0 0 8px rgba(255, 255, 255, 0.2)',
+                      boxShadow: '0 0 10px rgba(255, 255, 255, 0.1)'
+                    }}
+                  >
+                    <UserPlus size={16} />
+                    <span>Sign Up</span>
+                  </Link>
+                </>
+              )}
+            </div>
           </div>
         </div>
       </div>
