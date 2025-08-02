@@ -1,6 +1,6 @@
 // src/components/ImageSection.jsx
 import React, { useRef, useState } from 'react';
-import { motion, useInView } from 'framer-motion';
+import {motion,  useInView } from 'framer-motion';
 
 const cardVariants = {
   hidden: { opacity: 0, y: 60, scale: 0.95 },

@@ -55,7 +55,7 @@ const InfiniteMarquee = () => {
       </div>
 
       {/* Pure Tailwind CSS Animation using @keyframes in style tag */}
-           <style jsx>{`
+           <style jsx={true}>{`
         .marquee-animation {
           animation: marquee 45s linear infinite;
           width: calc(${images.length * 20}rem * 2);

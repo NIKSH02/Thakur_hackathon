@@ -2,8 +2,10 @@
 import Navbar from '../components/Navbar.jsx'
 import HeroSection from '../components/HeroSection.jsx';
 import InfiniteMarquee from '../components/InfiniteMarquee.jsx';
-import ImageGridSection from '../components/ImageGridEffect.jsx';
+import ImageGridEffect from '../components/ImageGridEffect.jsx';
+import ImageSection from '../components/ImageSection.jsx';
 import Dock from '../components/Dock.jsx'
+import Footer from '../components/Footer.jsx';
 
 import {
   VscHome,
@@ -14,6 +16,7 @@ import {
   VscMail,
   VscGraphLine,
 } from 'react-icons/vsc';
+
 
 
 const LandingPage = () => {
@@ -33,7 +36,7 @@ const items = [
       <Navbar />
       <HeroSection />
       <InfiniteMarquee />
-      <ImageGridSection />
+      <ImageGridEffect />
        <div className="my-class" style={{ zIndex: "10", position: 'fixed', bottom: "0",left: "50%"}}>
            <Dock
             items={items}
@@ -43,6 +46,8 @@ const items = [
             magnification={90}
             />
        </div>
+       <ImageSection/>
+       <Footer/>
     </div>
   );
 };
