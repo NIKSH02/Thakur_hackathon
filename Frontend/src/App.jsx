@@ -1,4 +1,5 @@
 import React from 'react'
+import Loader from "./pages/Loader"
 import {  BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom"
 import LandingPage from './pages/LandingPage.jsx'
 import AboutPage from './pages/AboutPage.jsx'
@@ -70,7 +71,7 @@ function App() {
      <AuthProvider>
        <LoadingProvider>
     <ErrorBoundary>
-     
+    <AuthProvider>
         <Router>
           <SplashCursor />
           <GlobalLoader />
@@ -164,6 +165,7 @@ function App() {
           />
         </Routes>
       </Router>
+      </AuthProvider>
     </ErrorBoundary>
     </LoadingProvider>
     </AuthProvider>
