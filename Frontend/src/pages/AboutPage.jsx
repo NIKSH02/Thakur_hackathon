@@ -3,6 +3,8 @@ import { motion, useInView } from 'framer-motion';
 import Navbar from '../components/Navbar.jsx';
 import Footer from '../components/Footer.jsx';
 import TeamMember from '../components/TeamMember.jsx';
+import SpotlightCard from '../components/SpotlightCard.jsx';
+  
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 60 },
@@ -119,6 +121,7 @@ const AboutPage = () => {
           >
             We're passionate about creating beautiful, functional spaces that reflect your unique style and enhance your everyday life.
           </motion.p>
+          <TeamMember />
         </div>
       </motion.section>
 
@@ -157,7 +160,7 @@ const AboutPage = () => {
           </div>
         </div>
       </motion.section>
-       <TeamMember />
+       
 
       {/* Values Section */}
       <motion.section 
@@ -183,11 +186,13 @@ const AboutPage = () => {
               <motion.div
                 key={index}
                 variants={fadeInUp}
-                className="bg-gray-800/50 backdrop-blur-sm rounded-2xl p-8 text-center hover:bg-gray-700/50 transition-all duration-300 border border-gray-700/30"
+                className=" backdrop-blur-sm rounded-2xl text-center transition-all duration-300 border border-gray-700/30"
               >
-                <div className="text-4xl mb-4">{value.icon}</div>
-                <h3 className="text-xl font-bold text-blue-400 mb-4">{value.title}</h3>
-                <p className="text-gray-300 leading-relaxed">{value.description}</p>
+                <SpotlightCard className="custom-spotlight-card" spotlightColor="rgba(138, 65, 198, 0.8)">
+                  <div className="text-4xl mb-4">{value.icon}</div>
+                  <h3 className="text-xl font-bold text-white-400 mb-4">{value.title}</h3>
+                  <p className="text-white-300 leading-relaxed">{value.description}</p>
+                </SpotlightCard>
               </motion.div>
             ))}
           </motion.div>
@@ -208,13 +213,16 @@ const AboutPage = () => {
             className="grid grid-cols-2 md:grid-cols-4 gap-8"
           >
             {stats.map((stat, index) => (
+              
               <motion.div
                 key={index}
                 variants={fadeInUp}
                 className="text-center"
               >
-                <div className="text-4xl md:text-5xl font-bold text-blue-400 mb-2">{stat.number}</div>
-                <div className="text-gray-300 text-lg">{stat.label}</div>
+                <SpotlightCard className="custom-spotlight-card" spotlightColor="rgba(138, 65, 198, 0.8)">
+                  <div className="text-4xl md:text-5xl font-bold text-white-400 mb-2">{stat.number}</div>
+                  <div className="text-white-300 text-lg">{stat.label}</div>
+                </SpotlightCard>
               </motion.div>
             ))}
           </motion.div>

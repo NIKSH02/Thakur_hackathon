@@ -4,10 +4,11 @@ import LandingPage from './pages/LandingPage.jsx'
 import AboutPage from './pages/AboutPage.jsx'
 import LoginPage from './pages/LoginPage.jsx'
 import SignUpPage from './pages/SignUpPage.jsx'
-import ProductDetailPage from './pages/ProductDetailPage.jsx'
 import SplashCursor from './components/SplashCursor.jsx'
 import { AuthProvider } from './context/AuthContext.jsx'
-
+import TextAnimationSection from './components/AnimatedTextSection.jsx'
+import ProductDetailPage from './pages/ProductDetailPage.jsx'
+import Project from './pages/Project.jsx'
 
 
 // Protected Route Component (currently not used)
@@ -67,39 +68,67 @@ function App() {
         <Router>
           <SplashCursor />
           <Routes>
-            <Route 
-              path="/"
-              element={
-                <LandingPage />
-              }
-            />
-            <Route 
-              path="/about"
-              element={
-                <AboutPage />
-              }
-            />
-            <Route 
-              path="/login"
-              element={
-                <LoginPage />
-              }
-            />
-            <Route 
-              path="/signup"
-              element={
-                <SignUpPage />
-              }
-            />
-            <Route 
-              path="/product/:id"
-              element={
-                <ProductDetailPage />
-              }
-            />
-          </Routes>
-        </Router>
-      </AuthProvider>
+          <Route 
+            path="/Load" 
+            element={
+              <Loader />
+          } /> 
+          <Route 
+            path="/"
+            element={
+              <LandingPage />
+            }
+          />
+          <Route 
+            path="/about"
+            element={
+              <AboutPage />
+            }
+          />
+          <Route 
+            path="/login"
+            element={
+              <LoginPage />
+            }
+          />
+          <Route 
+            path="/signup"
+            element={
+              <SignUpPage />
+            }
+          />
+          <Route 
+            path="/product/:id"
+            element={
+              <ProductDetailPage />
+            }
+          />
+          <Route 
+            path="/add"
+            element={
+              <Loader />
+            }
+          />
+          <Route
+            path='/jome'
+            element= {
+              <Loader />
+            }
+          />
+          <Route 
+            path='/animate'
+            element={
+              <TextAnimationSection />
+            }
+          />
+          <Route 
+            path='/text'
+            element={
+              <Project />
+            }
+          />
+        </Routes>
+      </Router>
     </ErrorBoundary>
   )
 }

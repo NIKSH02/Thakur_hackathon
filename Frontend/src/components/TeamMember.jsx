@@ -3,22 +3,22 @@ import { motion } from 'framer-motion';
 
 const teamMembers = [
   {
-    name: 'Dr. Rick McCartney',
+    name: 'Nikhil Sharma',
     role: 'CEO',
     image: '/images/mob2.jpg',
   },
   {
-    name: 'Chris Koha',
+    name: 'Roshan SIngh',
     role: 'COO',
     image: '/images/fest2.jpg',
   },
   {
-    name: 'Caroline Nieto',
+    name: 'Sumesh Yadav',
     role: 'Chief Product Officer',
     image: '/images/fest12.jpg',
   },
   {
-    name: 'Victor Albertos',
+    name: 'Kshitij Bhare',
     role: 'CFO',
     image: '/images/mob6.jpg',
   },
