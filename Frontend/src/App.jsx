@@ -5,6 +5,7 @@ import LandingPage from './pages/LandingPage.jsx'
 import AboutPage from './pages/AboutPage.jsx'
 import LoginPage from './pages/LoginPage.jsx'
 import SignUpPage from './pages/SignUpPage.jsx'
+import ProductDetailPage from './pages/ProductDetailPage.jsx'
 import SplashCursor from './components/SplashCursor.jsx'
 import { AuthProvider } from './context/AuthContext.jsx'
 
@@ -94,6 +95,12 @@ function App() {
             path="/signup"
             element={
               <SignUpPage />
+            }
+          />
+          <Route 
+            path="/product/:id"
+            element={
+              <ProductDetailPage />
             }
           />
           <Route 

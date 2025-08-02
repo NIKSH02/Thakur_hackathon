@@ -46,7 +46,7 @@ app.use((req, res, next) => {
 
 // Routes
 app.use("/api/auth", authRoutes);
-// app.use("/api/products", productRoutes); // Temporarily commented out
+app.use("/api/products", productRoutes);
 
 // 404 Route Not Found handler
 app.use((req, res, next) => {

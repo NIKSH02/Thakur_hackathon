@@ -1,6 +1,7 @@
 // src/components/ImageSection.jsx
-import React, { useRef, useState } from 'react';
-import {motion,  useInView } from 'framer-motion';
+import React, { useRef, useState, useEffect, useCallback } from 'react';
+import {motion,  useInView, useScroll, useTransform } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 
 const cardVariants = {
   hidden: { opacity: 0, y: 60, scale: 0.95 },
@@ -16,12 +17,45 @@ const cardVariants = {
   },
 };
 
+// Enhanced card variants for scroll-based transitions
+const scrollCardVariants = {
+  hidden: { 
+    opacity: 0, 
+    y: 100, 
+    scale: 0.9,
+    rotateX: 10 
+  },
+  visible: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    rotateX: 0,
+    transition: {
+      type: 'spring',
+      stiffness: 120,
+      damping: 20,
+      duration: 0.8,
+    },
+  },
+  scrollUp: {
+    opacity: 1,
+    y: -30, // Move upward during scroll
+    scale: 1.02,
+    rotateX: -5,
+    transition: {
+      type: 'spring',
+      stiffness: 150,
+      damping: 25,
+      duration: 0.6,
+    },
+  },
+};
+
 const ImageSection = () => {
-  // Additional images for carousel functionality
+  // Additional images for carousel functionality - Only 2 images
   const carouselImages = [
-    "/images/fest2.jpg",
-    "/images/fest1.jpg", 
- 
+    "/images/fest1.jpg",
+    "/images/fest2.jpg"
   ];
 
   const section1 = {
@@ -118,38 +152,224 @@ const ImageSection = () => {
 };
 
 const ImageGrid = ({ data, carouselImages }) => {
+  const navigate = useNavigate();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [section2ImageIndex, setSection2ImageIndex] = useState(0);
-
-  // Section 1 navigation
-  const nextImage = () => {
-    setCurrentImageIndex((prev) => (prev + 1) % carouselImages.length);
-  };
-
-  const prevImage = () => {
-    setCurrentImageIndex((prev) => (prev - 1 + carouselImages.length) % carouselImages.length);
-  };
-
-  // Section 2 navigation with different images
-  const section2Images = [
-    "/images/fest3.jpg",
-    "/images/fest4.jpg", 
+  const [slideDirection, setSlideDirection] = useState('right'); // 'left' or 'right'
+  const [section2SlideDirection, setSection2SlideDirection] = useState('right');
+  const [scrollDirection, setScrollDirection] = useState('down'); // Track scroll direction
   
-  ];
+  // Refs for intervals to manage them properly
+  const section1IntervalRef = useRef(null);
+  const section2IntervalRef = useRef(null);
+  
+  // Refs for tracking when sections are in view
+  const section1Ref = useRef(null);
+  const section2Ref = useRef(null);
+  const isSection1InView = useInView(section1Ref, { once: false, amount: 0.3, margin: "0px 0px -100px 0px" }); // Better detection
+  const isSection2InView = useInView(section2Ref, { once: false, amount: 0.3, margin: "0px 0px -100px 0px" }); // Better detection
 
-  const nextSection2Image = () => {
-    setSection2ImageIndex((prev) => (prev + 1) % section2Images.length);
-  };
+  // Scroll direction detection
+  const prevScrollY = useRef(0);
+  
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      if (currentScrollY > prevScrollY.current) {
+        setScrollDirection('down');
+      } else if (currentScrollY < prevScrollY.current) {
+        setScrollDirection('up');
+      }
+      prevScrollY.current = currentScrollY;
+    };
 
-  const prevSection2Image = () => {
-    setSection2ImageIndex((prev) => (prev - 1 + section2Images.length) % section2Images.length);
-  };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   // Check if this is section 2 (More Featured Products)
   const isSection2 = data.title === "More Featured Products";
 
+  // Function to clear and restart section 1 interval
+  const restartSection1Interval = useCallback(() => {
+    if (section1IntervalRef.current) {
+      clearInterval(section1IntervalRef.current);
+    }
+    
+    section1IntervalRef.current = setInterval(() => {
+      setCurrentImageIndex((prevIndex) => {
+        const nextIndex = (prevIndex + 1) % carouselImages.length;
+        const direction = nextIndex === 1 ? 'right' : 'left';
+        setSlideDirection(direction);
+        return nextIndex;
+      });
+    }, 1000); // Faster: 3 seconds between auto transitions
+  }, [carouselImages.length]);
+
+  // Function to clear and restart section 2 interval
+  const restartSection2Interval = useCallback(() => {
+    if (section2IntervalRef.current) {
+      clearInterval(section2IntervalRef.current);
+    }
+    
+    const section2Images = ["/images/fest5.jpg", "/images/fest6.jpg"];
+    section2IntervalRef.current = setInterval(() => {
+      setSection2ImageIndex((prevIndex) => {
+        const nextIndex = (prevIndex + 1) % section2Images.length;
+        const direction = nextIndex === 1 ? 'right' : 'left';
+        setSection2SlideDirection(direction);
+        return nextIndex;
+      });
+    }, 1500); // Faster: 3.5 seconds between auto transitions
+  }, []);
+
+  // Auto-play effect for section 1 carousel
+  useEffect(() => {
+    if (!isSection2 && isSection1InView && carouselImages.length > 1) {
+      // Add a small delay when first coming into view
+      const startDelay = setTimeout(() => {
+        restartSection1Interval();
+      }, 500); // Faster start when scrolling back
+
+      return () => {
+        clearTimeout(startDelay);
+        if (section1IntervalRef.current) {
+          clearInterval(section1IntervalRef.current);
+        }
+      };
+    } else {
+      if (section1IntervalRef.current) {
+        clearInterval(section1IntervalRef.current);
+      }
+    }
+  }, [isSection1InView, isSection2, carouselImages.length, restartSection1Interval]);
+
+  // Auto-play effect for section 2 carousel
+  useEffect(() => {
+    if (isSection2 && isSection2InView) {
+      const section2Images = [
+        "/images/fest5.jpg",
+        "/images/fest6.jpg"
+      ];
+      
+      if (section2Images.length > 1) {
+        // Add a small delay when first coming into view
+        const startDelay = setTimeout(() => {
+          restartSection2Interval();
+        }, 600); // Faster start when scrolling back
+
+        return () => {
+          clearTimeout(startDelay);
+          if (section2IntervalRef.current) {
+            clearInterval(section2IntervalRef.current);
+          }
+        };
+      }
+    } else {
+      if (section2IntervalRef.current) {
+        clearInterval(section2IntervalRef.current);
+      }
+    }
+  }, [isSection2InView, isSection2, restartSection2Interval]);
+
+  // Function to handle shop now button click
+  const handleShopNow = (productId = null) => {
+    // Default product ID that matches ProductDetailPage
+    const DEFAULT_PRODUCT_ID = '507f1f77bcf86cd799439011';
+    const id = productId || DEFAULT_PRODUCT_ID;
+    console.log('Navigating to product:', id);
+    
+    // Navigate to product page
+    navigate(`/product/${id}`);
+    
+    // Scroll to top of the page after navigation
+    setTimeout(() => {
+      window.scrollTo({
+        top: 0,
+        left: 0,
+        behavior: 'smooth'
+      });
+    }, 100); // Small delay to ensure navigation completes
+  };
+
+  // Section 1 navigation - proper directional sliding with interval restart
+  const nextImage = () => {
+    // Clear current interval to prevent conflicts
+    if (section1IntervalRef.current) {
+      clearInterval(section1IntervalRef.current);
+    }
+    
+    setSlideDirection('right'); // Moving forward = slide from right
+    setCurrentImageIndex((prev) => (prev + 1) % carouselImages.length);
+    
+    // Restart interval after manual navigation
+    setTimeout(() => {
+      if (isSection1InView) {
+        restartSection1Interval();
+      }
+    }, 1500); // Faster restart: Wait 2.5 seconds after manual click before resuming auto-play
+  };
+
+  const prevImage = () => {
+    // Clear current interval to prevent conflicts
+    if (section1IntervalRef.current) {
+      clearInterval(section1IntervalRef.current);
+    }
+    
+    setSlideDirection('left'); // Moving backward = slide from left
+    setCurrentImageIndex((prev) => (prev - 1 + carouselImages.length) % carouselImages.length);
+    
+    // Restart interval after manual navigation
+    setTimeout(() => {
+      if (isSection1InView) {
+        restartSection1Interval();
+      }
+    }, 1500); // Faster restart: Wait 2.5 seconds after manual click before resuming auto-play
+  };
+
+  // Section 2 navigation with different images - Only 2 images
+  const section2Images = [
+    "/images/fest5.jpg",
+    "/images/fest6.jpg"
+  ];
+
+  // Section 2 navigation - proper directional sliding with interval restart
+  const nextSection2Image = () => {
+    // Clear current interval to prevent conflicts
+    if (section2IntervalRef.current) {
+      clearInterval(section2IntervalRef.current);
+    }
+    
+    setSection2SlideDirection('right'); // Moving forward = slide from right
+    setSection2ImageIndex((prev) => (prev + 1) % section2Images.length);
+    
+    // Restart interval after manual navigation
+    setTimeout(() => {
+      if (isSection2InView) {
+        restartSection2Interval();
+      }
+    }, 1500); // Faster restart: Wait 2.5 seconds after manual click before resuming auto-play
+  };
+
+  const prevSection2Image = () => {
+    // Clear current interval to prevent conflicts
+    if (section2IntervalRef.current) {
+      clearInterval(section2IntervalRef.current);
+    }
+    
+    setSection2SlideDirection('left'); // Moving backward = slide from left
+    setSection2ImageIndex((prev) => (prev - 1 + section2Images.length) % section2Images.length);
+    
+    // Restart interval after manual navigation
+    setTimeout(() => {
+      if (isSection2InView) {
+        restartSection2Interval();
+      }
+    }, 2500); // Faster restart: Wait 2.5 seconds after manual click before resuming auto-play
+  };
+
   return (
-    <div>
+    <div ref={isSection2 ? section2Ref : section1Ref}>
       {isSection2 ? (
         // Layout for section 2: 4 smaller images on left, 1 large image on right
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
@@ -181,7 +401,10 @@ const ImageGrid = ({ data, carouselImages }) => {
                         <p className="text-sm font-semibold">{item.textOverlay}</p>
                       </div>
                     )}
-                    <button className="mt-2 bg-white text-gray-800 text-sm font-semibold px-4 py-2 rounded-full hover:bg-gray-200 transition-colors duration-300">
+                    <button 
+                      onClick={() => handleShopNow()}
+                      className="mt-2 bg-white text-gray-800 text-sm font-semibold px-4 py-2 rounded-full hover:bg-gray-200 transition-colors duration-300"
+                    >
                       Shop Now
                     </button>
                   </div>
@@ -190,66 +413,214 @@ const ImageGrid = ({ data, carouselImages }) => {
             ))}
           </div>
 
-          {/* Right side: Large image - positioned to the right */}
+          {/* Right side: Large image with auto-slideshow and slide animation */}
           <AnimatedCard className="relative overflow-hidden shadow-lg col-span-1 md:col-span-1 lg:col-span-2 row-span-2 group">
-            <img
+            <motion.img
+              key={section2ImageIndex} // Key change triggers re-animation
               src={section2Images[section2ImageIndex]}
               alt={data.items[0].alt}
-              className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+              className="w-full h-full object-cover"
+              initial={{ 
+                x: section2SlideDirection === 'right' ? '100%' : '-100%'
+              }}
+              animate={{ 
+                x: 0
+              }}
+              exit={{ 
+                x: section2SlideDirection === 'right' ? '-100%' : '100%'
+              }}
+              transition={{ 
+                duration: 2.0, // Faster and smoother transition
+                ease: [0.25, 0.1, 0.25, 1], // Smoother custom cubic-bezier
+                x: { type: "spring", stiffness: 200, damping: 25 } // Faster spring
+              }}
+              style={{
+                transformOrigin: 'center center'
+              }}
+              whileHover={{
+                scale: 1.03,
+                transition: { duration: 0.3, ease: "easeOut" }
+              }}
             />
             
-            {/* Navigation buttons for section 2 - always visible */}
-            <div className="absolute bottom-4 right-4 flex space-x-3 z-10 opacity-100">
-              <button
+            {/* Enhanced navigation buttons for section 2 */}
+            <div className="absolute bottom-4 right-4 flex space-x-3 z-10">
+              <motion.button
                 onClick={prevSection2Image}
-                className="bg-black/70 hover:bg-black/90 text-white p-3 rounded-full transition-all duration-300 shadow-lg"
+                className="bg-black/80 hover:bg-black/95 text-white p-3 rounded-full shadow-xl"
+                whileHover={{ 
+                  scale: 1.1,
+                  backgroundColor: "rgba(0, 0, 0, 0.95)",
+                  boxShadow: "0 10px 25px rgba(0, 0, 0, 0.3)"
+                }}
+                whileTap={{ scale: 0.95 }}
+                transition={{ duration: 0.2, ease: "easeOut" }}
               >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <motion.svg 
+                  className="w-5 h-5" 
+                  fill="none" 
+                  stroke="currentColor" 
+                  viewBox="0 0 24 24"
+                  whileHover={{ x: -2 }}
+                  transition={{ duration: 0.2 }}
+                >
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                </svg>
-              </button>
+                </motion.svg>
+              </motion.button>
               
-              <button
+              <motion.button
                 onClick={nextSection2Image}
-                className="bg-black/70 hover:bg-black/90 text-white p-3 rounded-full transition-all duration-300 shadow-lg"
+                className="bg-black/80 hover:bg-black/95 text-white p-3 rounded-full shadow-xl"
+                whileHover={{ 
+                  scale: 1.1,
+                  backgroundColor: "rgba(0, 0, 0, 0.95)",
+                  boxShadow: "0 10px 25px rgba(0, 0, 0, 0.3)"
+                }}
+                whileTap={{ scale: 0.95 }}
+                transition={{ duration: 0.2, ease: "easeOut" }}
               >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <motion.svg 
+                  className="w-5 h-5" 
+                  fill="none" 
+                  stroke="currentColor" 
+                  viewBox="0 0 24 24"
+                  whileHover={{ x: 2 }}
+                  transition={{ duration: 0.2 }}
+                >
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
-              </button>
+                </motion.svg>
+              </motion.button>
+            </div>
+            
+            {/* Enhanced progress indicators */}
+            <div className="absolute bottom-4 left-4 flex space-x-2">
+              {section2Images.map((_, index) => (
+                <motion.div
+                  key={index}
+                  className={`w-3 h-3 rounded-full cursor-pointer ${
+                    index === section2ImageIndex 
+                      ? 'bg-white shadow-lg' 
+                      : 'bg-white/50 hover:bg-white/70'
+                  }`}
+                  whileHover={{ scale: 1.2 }}
+                  animate={{
+                    scale: index === section2ImageIndex ? 1.1 : 1,
+                    opacity: index === section2ImageIndex ? 1 : 0.6
+                  }}
+                  transition={{ duration: 0.3, ease: "easeOut" }}
+                  onClick={() => {
+                    setSection2SlideDirection(index > section2ImageIndex ? 'right' : 'left');
+                    setSection2ImageIndex(index);
+                  }}
+                />
+              ))}
             </div>
           </AnimatedCard>
         </div>
       ) : (
-        // Original layout for section 1
+        // Original layout for section 1 with auto-slideshow
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
-          {/* First large image with carousel */}
+          {/* First large image with carousel, auto-slideshow and slide animation */}
           <AnimatedCard className="relative overflow-hidden shadow-lg col-span-1 lg:col-span-2 row-span-2 group">
-            <img
+            <motion.img
+              key={currentImageIndex} // Key change triggers re-animation
               src={carouselImages[currentImageIndex]}
               alt={data.items[0].alt}
-              className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+              className="w-full h-full object-cover"
+              initial={{ 
+                x: slideDirection === 'right' ? '100%' : '-100%'
+              }}
+              animate={{ 
+                x: 0
+              }}
+              exit={{ 
+                x: slideDirection === 'right' ? '-100%' : '100%'
+              }}
+              transition={{ 
+                duration: 2.0, // Faster and smoother transition
+                ease: [0.25, 0.1, 0.25, 1], // Smoother custom cubic-bezier
+                x: { type: "spring", stiffness: 200, damping: 25 } // Faster spring
+              }}
+              style={{
+                transformOrigin: 'center center'
+              }}
+              whileHover={{
+                scale: 1.03,
+                transition: { duration: 0.3, ease: "easeOut" }
+              }}
             />
             
-            {/* Navigation buttons at bottom */}
-            <div className="absolute bottom-4 right-4 flex space-x-3 z-10 opacity-100">
-              <button
+            {/* Enhanced navigation buttons */}
+            <div className="absolute bottom-4 right-4 flex space-x-3 z-10">
+              <motion.button
                 onClick={prevImage}
-                className="bg-black/70 hover:bg-black/90 text-white p-3 rounded-full transition-all duration-300 shadow-lg"
+                className="bg-black/80 hover:bg-black/95 text-white p-3 rounded-full shadow-xl"
+                whileHover={{ 
+                  scale: 1.1,
+                  backgroundColor: "rgba(0, 0, 0, 0.95)",
+                  boxShadow: "0 10px 25px rgba(0, 0, 0, 0.3)"
+                }}
+                whileTap={{ scale: 0.95 }}
+                transition={{ duration: 0.2, ease: "easeOut" }}
               >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <motion.svg 
+                  className="w-5 h-5" 
+                  fill="none" 
+                  stroke="currentColor" 
+                  viewBox="0 0 24 24"
+                  whileHover={{ x: -2 }}
+                  transition={{ duration: 0.2 }}
+                >
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                </svg>
-              </button>
+                </motion.svg>
+              </motion.button>
               
-              <button
+              <motion.button
                 onClick={nextImage}
-                className="bg-black/70 hover:bg-black/90 text-white p-3 rounded-full transition-all duration-300 shadow-lg"
+                className="bg-black/80 hover:bg-black/95 text-white p-3 rounded-full shadow-xl"
+                whileHover={{ 
+                  scale: 1.1,
+                  backgroundColor: "rgba(0, 0, 0, 0.95)",
+                  boxShadow: "0 10px 25px rgba(0, 0, 0, 0.3)"
+                }}
+                whileTap={{ scale: 0.95 }}
+                transition={{ duration: 0.2, ease: "easeOut" }}
               >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <motion.svg 
+                  className="w-5 h-5" 
+                  fill="none" 
+                  stroke="currentColor" 
+                  viewBox="0 0 24 24"
+                  whileHover={{ x: 2 }}
+                  transition={{ duration: 0.2 }}
+                >
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
-              </button>
+                </motion.svg>
+              </motion.button>
+            </div>
+            
+            {/* Enhanced progress indicators */}
+            <div className="absolute bottom-4 left-4 flex space-x-2">
+              {carouselImages.map((_, index) => (
+                <motion.div
+                  key={index}
+                  className={`w-3 h-3 rounded-full cursor-pointer ${
+                    index === currentImageIndex 
+                      ? 'bg-white shadow-lg' 
+                      : 'bg-white/50 hover:bg-white/70'
+                  }`}
+                  whileHover={{ scale: 1.2 }}
+                  animate={{
+                    scale: index === currentImageIndex ? 1.1 : 1,
+                    opacity: index === currentImageIndex ? 1 : 0.6
+                  }}
+                  transition={{ duration: 0.3, ease: "easeOut" }}
+                  onClick={() => {
+                    setSlideDirection(index > currentImageIndex ? 'right' : 'left');
+                    setCurrentImageIndex(index);
+                  }}
+                />
+              ))}
             </div>
           </AnimatedCard>
 
@@ -284,7 +655,10 @@ const ImageGrid = ({ data, carouselImages }) => {
                       <p className="text-sm font-semibold">{item.textOverlay}</p>
                     </div>
                   )}
-                  <button className="mt-2 bg-white text-gray-800 text-sm font-semibold px-4 py-2 rounded-full hover:bg-gray-200 transition-colors duration-300">
+                  <button 
+                    onClick={() => handleShopNow()}
+                    className="mt-2 bg-white text-gray-800 text-sm font-semibold px-4 py-2 rounded-full hover:bg-gray-200 transition-colors duration-300"
+                  >
                     Shop Now
                   </button>
                 </div>
