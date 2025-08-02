@@ -12,5 +12,6 @@ export default defineConfig({
   ],
   esbuild: {
     jsx: 'automatic'
-  }
+  },
+  assetsInclude: ['**/*.glb'],
 })

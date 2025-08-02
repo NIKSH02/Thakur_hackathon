@@ -170,10 +170,6 @@ export default function TextAnimationSection() {
                     </div>
                 </div>
             </div>
-
-            <div className="info-section">
-                <h1>End of Animation</h1>
-            </div>
         </div>
     );
 }

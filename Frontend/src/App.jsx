@@ -5,10 +5,11 @@ import LandingPage from './pages/LandingPage.jsx'
 import AboutPage from './pages/AboutPage.jsx'
 import LoginPage from './pages/LoginPage.jsx'
 import SignUpPage from './pages/SignUpPage.jsx'
-// import SplashCursor from './components/SplashCursor.jsx'
+import SplashCursor from './components/SplashCursor.jsx'
 import { AuthProvider } from './context/AuthContext.jsx'
 import TextAnimationSection from './components/AnimatedTextSection.jsx'
-
+import ProductDetailPage from './pages/ProductDetailPage.jsx'
+import Project from './pages/Project.jsx'
 
 
 // Protected Route Component (currently not used)
@@ -66,7 +67,7 @@ function App() {
     <AuthProvider>
       <ErrorBoundary>
         <Router>
-          {/* <SplashCursor /> */}
+          <SplashCursor />
           <Routes>
           <Route 
             path="/Load" 
@@ -119,6 +120,12 @@ function App() {
             path='/animate'
             element={
               <TextAnimationSection />
+            }
+          />
+          <Route 
+            path='/text'
+            element={
+              <Project />
             }
           />
         </Routes>

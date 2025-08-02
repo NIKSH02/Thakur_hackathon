@@ -160,10 +160,9 @@ const loginWithOtp = asyncHandler(async (req, res, next) => {
   res.json(new ApiResponse(200, null, 'Login successful'));
 });
 
-// Logout (signout)
 const logout = asyncHandler(async (req, res, next) => {
   clearAuthCookies(res);
-  // Optionally, invalidate refresh token in DB if you want
+
   if (req.body.email) {
     const user = await User.findOne({ email: req.body.email });
     if (user) {
@@ -174,7 +173,6 @@ const logout = asyncHandler(async (req, res, next) => {
   res.json(new ApiResponse(200, null, 'Logged out successfully'));
 });
 
-// ================= EXPORTS =================
 export {
   signup,
   signin,
