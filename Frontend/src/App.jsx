@@ -13,8 +13,6 @@ import PageWithLoader from './components/PageWithLoader.jsx'
 import TextAnimationSection from './components/AnimatedTextSection.jsx'
 import ProductDetailPage from './pages/ProductDetailPage.jsx'
 import Project from './pages/Project.jsx'
-import Loader from './pages/Loader.jsx'
-
 
 // Protected Route Component (currently not used)
 const ProtectedRoute = ({ children }) => {
