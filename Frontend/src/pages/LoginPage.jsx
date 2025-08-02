@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { signinService, sendOtpService, loginWithOtpService } from '../services/authService';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Eye, EyeOff, Mail, Lock, ArrowLeft } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { useNavigateWithLoader } from '../hooks/useNavigateWithLoader.js';
 
 const LoginPage = () => {
-  const navigate = useNavigate();
+  const { navigateWithLoader } = useNavigateWithLoader();
   const { login } = useAuth();
   const [loginMethod, setLoginMethod] = useState('password');
   const [usernameOrEmail, setUsernameOrEmail] = useState('');
@@ -46,7 +47,10 @@ const LoginPage = () => {
       setMessage('Login successful! Redirecting...');
       setMessageType('success');
       setTimeout(() => {
-        navigate('/');
+        navigateWithLoader('/', {
+          message: 'WELCOME BACK',
+          duration: 1500
+        });
       }, 1000);
     } catch (err) {
       setMessage(err.response?.data?.message || 'Login failed.');
@@ -116,7 +120,10 @@ const LoginPage = () => {
       clearTimeout(otpTimerRef.current);
       setOtpTimer(0);
       setTimeout(() => {
-        navigate('/');
+        navigateWithLoader('/', {
+          message: 'WELCOME BACK',
+          duration: 1500
+        });
       }, 1000);
     } catch (err) {
       setMessage(err.response?.data?.message || 'Invalid OTP. Please try again.');

@@ -6,7 +6,7 @@ import ImageGridEffect from '../components/ImageGridEffect.jsx';
 import ImageSection from '../components/ImageSection.jsx';
 import Dock from '../components/Dock.jsx'
 import Footer from '../components/Footer.jsx';
-import { useNavigate } from 'react-router-dom';
+import { useNavigateWithLoader } from '../hooks/useNavigateWithLoader.js';
 
 import {
   VscHome,
@@ -21,7 +21,7 @@ import {
 
 
 const LandingPage = () => {
-  const navigate = useNavigate();
+  const { navigateWithLoader } = useNavigateWithLoader();
 
   // Function to scroll to hero section
   const scrollToHero = () => {
@@ -34,9 +34,12 @@ const LandingPage = () => {
     }
   };
 
-  // Function to navigate to signup page
+  // Function to navigate to signup page with loader
   const goToSignup = () => {
-    navigate('/signup');
+    navigateWithLoader('/signup', {
+      message: 'TAKING YOU TO SIGNUP',
+      duration: 1500
+    });
   };
 
 const items = [

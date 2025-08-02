@@ -1,25 +1,28 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 
-const Loader = ({ onComplete }) => {
+const LoaderComponent = ({ 
+  onComplete, 
+  duration = 4000 
+}) => {
   const [counter, setCounter] = useState(1);
   const [isVisible, setIsVisible] = useState(true);
   const [fadeOut, setFadeOut] = useState(false);
-  const [textVisible, setTextVisible] = useState([false, false, false, false]);
   const [darkening, setDarkening] = useState(false);
   
+  // Use default message if no custom message provided
+  const [textVisible, setTextVisible] = useState([false, false, false, false]);
 
   useEffect(() => {
     // Text animation - sequential appearance
     const textTimers = [
-      setTimeout(() => setTextVisible(prev => [true, ...prev.slice(1)]), 300),
-      setTimeout(() => setTextVisible(prev => [prev[0], true, ...prev.slice(2)]), 600),
-      setTimeout(() => setTextVisible(prev => [...prev.slice(0, 2), true, prev[3]]), 900),
-      setTimeout(() => setTextVisible(prev => [...prev.slice(0, 3), true]), 1200),
+      setTimeout(() => setTextVisible(prev => [true, prev[1], prev[2], prev[3]]), 300),
+      setTimeout(() => setTextVisible(prev => [prev[0], true, prev[2], prev[3]]), 600),
+      setTimeout(() => setTextVisible(prev => [prev[0], prev[1], true, prev[3]]), 900),
+      setTimeout(() => setTextVisible(prev => [prev[0], prev[1], prev[2], true]), 1200),
     ];
 
     // Counter animation
-     const counterInterval = setInterval(() => {
+    const counterInterval = setInterval(() => {
       setCounter(prev => {
         if (prev >= 96 && prev < 100) {
           setDarkening(true);
@@ -38,13 +41,13 @@ const Loader = ({ onComplete }) => {
         }
         return prev + 1;
       });
-    }, 40);
+    }, duration / 100);
 
     return () => {
       textTimers.forEach(timer => clearTimeout(timer));
       clearInterval(counterInterval);
     };
-  }, [onComplete]);
+  }, [onComplete, duration]);
 
   if (!isVisible) return null;
 
@@ -284,45 +287,4 @@ const Loader = ({ onComplete }) => {
   );
 };
 
-// Demo wrapper to show the loader in action
-const LoaderDemo = () => {
-  const [showLoader, setShowLoader] = useState(true);
-  // eslint-disable-next-line no-unused-vars
-  const nav = useNavigate();
-
-  const handleLoaderComplete = () => {
-    setShowLoader(false);
-    // Here you would typically load your main application
-    // nav('/auth')
-    console.log('Loader completed - Main app can now load');
-  };
-
-  return (
-    <div style={{ width: '100vw', height: '100vh', background: '#f0f0f0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      {showLoader && <Loader onComplete={handleLoaderComplete} />}
-      
-      {!showLoader && (
-        <div style={{ textAlign: 'center', padding: '40px' }}>
-          <h1 style={{ color: '#333', marginBottom: '20px' }}>Welcome to Your Web Experience!</h1>
-          <p style={{ color: '#666', marginBottom: '20px' }}>The loader has completed successfully.</p>
-          <button 
-            onClick={() => setShowLoader(true)}
-            style={{
-              padding: '12px 24px',
-              background: '#000',
-              color: 'white',
-              border: 'none',
-              borderRadius: '6px',
-              cursor: 'pointer',
-              fontSize: '16px'
-            }}
-          >
-            Show Loader Again
-          </button>
-        </div>
-      )}
-    </div>
-  );
-};
-
-export default LoaderDemo;
+export default LoaderComponent;

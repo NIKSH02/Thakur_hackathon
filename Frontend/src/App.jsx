@@ -6,9 +6,13 @@ import LoginPage from './pages/LoginPage.jsx'
 import SignUpPage from './pages/SignUpPage.jsx'
 import SplashCursor from './components/SplashCursor.jsx'
 import { AuthProvider } from './context/AuthContext.jsx'
+import LoadingProvider from './context/LoadingContext.jsx'
+import GlobalLoader from './components/GlobalLoader.jsx'
+import PageWithLoader from './components/PageWithLoader.jsx'
 import TextAnimationSection from './components/AnimatedTextSection.jsx'
 import ProductDetailPage from './pages/ProductDetailPage.jsx'
 import Project from './pages/Project.jsx'
+import Loader from './pages/Loader.jsx'
 
 
 // Protected Route Component (currently not used)
@@ -63,10 +67,13 @@ class ErrorBoundary extends React.Component {
 function App() {
 
   return (
+     <AuthProvider>
+       <LoadingProvider>
     <ErrorBoundary>
-      <AuthProvider>
+     
         <Router>
           <SplashCursor />
+          <GlobalLoader />
           <Routes>
           <Route 
             path="/Load" 
@@ -76,31 +83,51 @@ function App() {
           <Route 
             path="/"
             element={
-              <LandingPage />
+              <PageWithLoader 
+                loadingDuration={2500}
+              >
+                <LandingPage />
+              </PageWithLoader>
             }
           />
           <Route 
             path="/about"
             element={
-              <AboutPage />
+              <PageWithLoader 
+                loadingDuration={2000}
+              >
+                <AboutPage />
+              </PageWithLoader>
             }
           />
           <Route 
             path="/login"
             element={
-              <LoginPage />
+              <PageWithLoader 
+                loadingDuration={2000}
+              >
+                <LoginPage />
+              </PageWithLoader>
             }
           />
           <Route 
             path="/signup"
             element={
-              <SignUpPage />
+              <PageWithLoader 
+                loadingDuration={2000}
+              >
+                <SignUpPage />
+              </PageWithLoader>
             }
           />
           <Route 
             path="/product/:id"
             element={
-              <ProductDetailPage />
+              <PageWithLoader 
+                loadingDuration={2000}
+              >
+                <ProductDetailPage />
+              </PageWithLoader>
             }
           />
           <Route 
@@ -118,18 +145,28 @@ function App() {
           <Route 
             path='/animate'
             element={
-              <TextAnimationSection />
+              <PageWithLoader 
+                loadingDuration={2000}
+              >
+                <TextAnimationSection />
+              </PageWithLoader>
             }
           />
           <Route 
             path='/text'
             element={
-              <Project />
+              <PageWithLoader 
+                loadingDuration={2000}
+              >
+                <Project />
+              </PageWithLoader>
             }
           />
         </Routes>
       </Router>
     </ErrorBoundary>
+    </LoadingProvider>
+    </AuthProvider>
   )
 }
 
