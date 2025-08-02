@@ -28,7 +28,6 @@ const MinimalNavbar = () => {
   const navLinks = [
     { name: 'Home', href: '/' },
     { name: 'About', href: '/about' },
-    { name: 'Projects', href: '#projects' },
     { name: 'Contact', href: '#contact' }
   ];
 
@@ -78,7 +77,29 @@ const MinimalNavbar = () => {
                 >
                   {link.name}
                 </Link>
+                
               ))}
+              <Link
+                  to="/text"
+                  className="flex items-center space-x-2 px-4 py-2 text-white font-medium transition-all duration-300 hover:scale-105 rounded-lg"
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    textShadow: '0 0 8px rgba(255, 255, 255, 0.2)',
+                    boxShadow: '0 0 10px rgba(255, 255, 255, 0.1)'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.background = 'rgba(255, 255, 255, 0.15)';
+                    e.target.style.textShadow = '0 0 15px rgba(255, 255, 255, 0.4)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.background = 'rgba(255, 255, 255, 0.1)';
+                    e.target.style.textShadow = '0 0 8px rgba(255, 255, 255, 0.2)';
+                      }}
+                    >
+                      <LogIn size={18} />
+                      <span>Mystry ✌🏻</span>
+                    </Link>
               
               {/* Authentication Buttons */}
               <div className="flex items-center space-x-4">

@@ -281,7 +281,7 @@ const LoaderDemo = () => {
   const handleLoaderComplete = () => {
     setShowLoader(false);
     // Here you would typically load your main application
-    nav('/auth')
+    // nav('/auth')
     console.log('Loader completed - Main app can now load');
   };
 
